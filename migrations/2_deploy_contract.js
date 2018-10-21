@@ -14,14 +14,15 @@ const EmissionFunds = artifacts.require("./EmissionFunds");
 const EternalStorageProxy = artifacts.require("./eternal-storage/EternalStorageProxy.sol");
 const Web3 = require('web3')
 
+
 const getWeb3Latest = () => {
  const web3Latest = new Web3(web3.currentProvider)
  return web3Latest
 }
 
 module.exports = function(deployer, network, accounts) {
-  if (network === 'sokol') {
-    let masterOfCeremony = process.env.MASTER_OF_CEREMONY;
+  if (network === 'ganache') {
+    let masterOfCeremony = "0xd665Ed5065F0bC1686B27d4E702Ef41bBB0cb184"; //process.env.MASTER_OF_CEREMONY;
     let poaNetworkConsensusAddress = process.env.POA_NETWORK_CONSENSUS_ADDRESS;
     let previousKeysManager = process.env.OLD_KEYSMANAGER || "0x0000000000000000000000000000000000000000";
     let demoMode = !!process.env.DEMO === true;
@@ -35,11 +36,16 @@ module.exports = function(deployer, network, accounts) {
     let votingToChangeProxyAddress, votingToChangeProxyAddressImplAddress;
     let votingToManageEmissionFunds, votingToManageEmissionFundsImplAddress;
     let rewardByBlock, rewardByBlockImplAddress;
+    let deployPOA = process.env.DEPLOY_POA 
+    //ignore CMD line option
+    
+    deployPOA = true; 
 
     const minBallotDuration = demoMode ? 0 : 172800;
 
     deployer.then(async function() {
-      if (!!process.env.DEPLOY_POA === true) {
+      if (deployPOA=== true) {
+        console.log("Deploy_POA");
         let validators = [];
 
         if (poaNetworkConsensusAddress) {
@@ -242,6 +248,9 @@ module.exports = function(deployer, network, accounts) {
     }).catch(function(error) {
       console.error(error);
     });
+  }
+  else {
+    console.warn("nothing to do");
   }
 };
 
