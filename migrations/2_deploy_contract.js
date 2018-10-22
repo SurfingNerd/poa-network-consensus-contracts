@@ -22,7 +22,8 @@ const getWeb3Latest = () => {
 
 module.exports = function(deployer, network, accounts) {
   if (network === 'ganache') {
-    let masterOfCeremony = "0xd665Ed5065F0bC1686B27d4E702Ef41bBB0cb184"; //process.env.MASTER_OF_CEREMONY;
+    //todo: let masterOfCeremony be the executing account ?
+    let masterOfCeremony = "0xcf9526Df7f6227a738B543bF889AB3A3d7dBE537"; //process.env.MASTER_OF_CEREMONY;
     let poaNetworkConsensusAddress = process.env.POA_NETWORK_CONSENSUS_ADDRESS;
     let previousKeysManager = process.env.OLD_KEYSMANAGER || "0x0000000000000000000000000000000000000000";
     let demoMode = !!process.env.DEMO === true;
@@ -38,8 +39,11 @@ module.exports = function(deployer, network, accounts) {
     let rewardByBlock, rewardByBlockImplAddress;
     let deployPOA = process.env.DEPLOY_POA 
     //ignore CMD line option
+    //saveToFile = process.env.SAVE_TO_FILE 
+    deployPOA = true;
+    saveToFile = true;
+    demoMode = true;
     
-    deployPOA = true; 
 
     const minBallotDuration = demoMode ? 0 : 172800;
 
@@ -201,7 +205,7 @@ module.exports = function(deployer, network, accounts) {
         rewardByBlock.address
       );
 
-      if (!!process.env.SAVE_TO_FILE === true) {
+      if (saveToFile === true) {
         const contracts = {
           "VOTING_TO_CHANGE_KEYS_ADDRESS": votingToChangeKeys.address,
           "VOTING_TO_CHANGE_MIN_THRESHOLD_ADDRESS": votingToChangeMinThreshold.address,
@@ -218,6 +222,8 @@ module.exports = function(deployer, network, accounts) {
         };
 
         fs.writeFileSync('./contracts.json', JSON.stringify(contracts, null, 2));
+
+        console.log('\n' +  JSON.stringify(contracts, null, 2) + '\n');
       }
 
       console.log(
